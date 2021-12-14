@@ -1,10 +1,11 @@
 import json
+from json.decoder         import JSONDecodeError
 
 from django.http          import JsonResponse
 from django.views         import View
 from django.db.utils      import IntegrityError
 
-from products.models      import Comment, Course, CourseStat
+from products.models      import Comment, Course, Like, CourseStat
 from core.utils           import Authorize
 from users.models         import UserCourse, UserCourseStat
 from django.db            import transaction
@@ -83,3 +84,29 @@ class CommentView(View):
 
         except Comment.DoesNotExist:
             return JsonResponse({'message':'INVAILD_COMMENT'},status=401)
+
+class LikeView(View):
+    @Authorize
+    def post(self,request):
+        try:
+            data = json.loads(request.body)
+            course_id = data["course_id"]
+            
+            like, created = Like.objects.get_or_create(course_id=course_id, user_id=request.user.id)
+            
+            if not created:
+                like.delete()
+                return JsonResponse({"message" : "DELETE_LIKE"}, status=200)
+            return JsonResponse({"message" : "SUCCESS_LIKE"}, status=200)
+
+        except KeyError:
+            return JsonResponse({"message" : "KEY_ERROR"}, status=400)
+        
+        except JSONDecodeError:
+            return JsonResponse({"message" : "JSON_DECODE_ERROR"},status=400)
+        
+        except IntegrityError:
+            return JsonResponse({"message" : "INVALID_VALUE"}, status=400)
+
+
+
