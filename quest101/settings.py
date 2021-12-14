@@ -19,29 +19,23 @@ import os
 import pymysql
 pymysql.install_as_MySQLdb()
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ["SECRETKEY2"]
-ALGORITHM = os.environ["ALGORITHM"]
+ALGORITHM  = os.environ["ALGORITHM"]
 
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
 DATABASES = {
-   'default' :
+    'default' :
 {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ['DB2'],
-        'USER': os.environ['USER'],
+        'ENGINE'  : 'django.db.backends.mysql',
+        'NAME'    : os.environ['DB2'],
+        'USER'    : os.environ['USER'],
         'PASSWORD': os.environ['PASSWORD'],
-        'HOST': os.environ['HOST'],
-        'PORT': os.environ['PORT'],
-        'OPTIONS': {'charset': 'utf8mb4'}
+        'HOST'    : os.environ['HOST'],
+        'PORT'    : os.environ['PORT'],
+        'OPTIONS' : {'charset': 'utf8mb4'}
     }
 }
 
@@ -57,6 +51,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'users',
+    'core',
+    'products',
 ]
 
 MIDDLEWARE = [
