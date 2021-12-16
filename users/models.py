@@ -1,11 +1,12 @@
 from django.db   import models
+from django.db.models.fields import URLField
 
 from core.models     import TimeStampModel
 from products.models import Course,CourseStat
 
 class User(TimeStampModel):
     name                = models.CharField(max_length=50)
-    phone_number        = models.CharField(max_length=50)
+    phone_number        = models.CharField(max_length=50,null=True)
     profile_image       = models.URLField(max_length=300,null=True)
     description         = models.CharField(max_length=1000,null=True)
     kakao_id            = models.IntegerField(unique=True)
@@ -23,8 +24,8 @@ class UserCourseStat(models.Model):
         db_table        = 'user_course_stats'
         constraints     = [
             models.UniqueConstraint(
-                fields=['user','course_stat'],
-                name='unique user_course_stats',
+                fields  =['user','course_stat'],
+                name    ='unique user_course_stats',
             ),
         ]
 
@@ -36,7 +37,15 @@ class UserCourse(TimeStampModel):
         db_table        = 'user_courses'
         constraints     = [
             models.UniqueConstraint(
-                fields=['user','course'],
-                name='unique user_courses',
+                fields  =['user','course'],
+                name    ='unique user_courses',
             ),
         ]
+
+class SocialAccount(models.Model):
+    channel            = models.CharField(max_length=20)
+    url                = models.URLField(max_length=300,null=True)
+    user               = models.ForeignKey('User',on_delete=models.CASCADE)
+
+    class Meta:
+        db_table       = 'social_accounts'
