@@ -1,3 +1,4 @@
+
 from django.db   import models
 
 from core.models  import TimeStampModel
@@ -13,7 +14,6 @@ class Course(TimeStampModel):
     payment_period      = models.IntegerField()
     user                = models.ForeignKey('users.User',on_delete=models.CASCADE)
     sub_category        = models.ForeignKey('SubCategory',on_delete=models.CASCADE)
-    media               = models.ForeignKey('Media', on_delete=models.CASCADE)
     level               = models.ForeignKey('Level', on_delete=models.CASCADE)
     
     class Meta:
@@ -22,6 +22,7 @@ class Course(TimeStampModel):
 class Media(models.Model):
     url                 = models.URLField(max_length=200)
     type                = models.CharField(max_length=20)
+    course              = models.ForeignKey('Course',on_delete=models.CASCADE)
 
     class Meta:
         db_table        = 'medias'
@@ -42,7 +43,6 @@ class Comment(TimeStampModel):
 
 class Stat(models.Model):
     name                = models.CharField(max_length=10,unique=True)
-    stat                = models.IntegerField(default=0)
 
     class Meta:
         db_table        = 'stats'
@@ -50,6 +50,7 @@ class Stat(models.Model):
 class CourseStat(models.Model):
     course              = models.ForeignKey('Course',on_delete=models.CASCADE)
     stat                = models.ForeignKey('Stat',on_delete=models.CASCADE)
+    score                = models.IntegerField(default=0)
 
     class Meta:
         db_table        = 'course_stats'
