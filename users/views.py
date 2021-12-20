@@ -15,11 +15,8 @@ class KakaoAPI:
     def get_kakao_user(self):
         kakao_headers = {'Authorization' : f'Bearer {self.kakao_token}'}
         response = requests.get(self.kakao_url, headers=kakao_headers, timeout = 5)
-    
-        if not response.status_code == 200:
-            return JsonResponse({'MESSAGE': 'INVALID_TOKEN'}, status=400)
         
-        if response.status_code == -401:
+        if response.json().get('code') == -401: 
                 return JsonResponse({'message': 'INVALID KAKAO USER'}, status=400)
             
         return response.json()
@@ -38,7 +35,7 @@ class KakaoSignInView(View):
             
             user, created = User.objects.get_or_create(
                 kakao_id = kakao_id,
-                dafaults = {'name'          : name,
+                defaults = {'name'          : name,
                             'email'         : email,
                             'profile_image' : profile_image
                         }
