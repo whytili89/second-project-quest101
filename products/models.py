@@ -1,26 +1,27 @@
-
 from django.db   import models
 
 from core.models  import TimeStampModel
-
+        
 class Course(TimeStampModel):
-    name                = models.CharField(max_length=45)
-    thumbnail_image_url = models.URLField(max_length=200)
-    description         = models.TextField(max_length=1000,null=True)
-    price               = models.DecimalField(max_digits=10,decimal_places=2)
-    start_date          = models.DateTimeField()
-    end_date            = models.DateTimeField()
-    limit               = models.IntegerField(null=True)
-    payment_period      = models.IntegerField()
-    user                = models.ForeignKey('users.User',on_delete=models.CASCADE)
-    sub_category        = models.ForeignKey('SubCategory',on_delete=models.CASCADE)
-    level               = models.ForeignKey('Level', on_delete=models.CASCADE)
+    name                 = models.CharField(max_length=45, null=True)
+    thumbnail_image_url  = models.URLField(max_length=3000, null=True)
+    description          = models.TextField(max_length=1000,null=True)
+    price                = models.DecimalField(max_digits=10, null=True, decimal_places=2)
+    start_date           = models.DateTimeField(null=True)
+    end_date             = models.DateTimeField(null=True)
+    limit                = models.IntegerField(null=True)
+    payment_period       = models.IntegerField(null=True)
+    user                 = models.ForeignKey('users.User',on_delete=models.CASCADE)
+    sub_category         = models.ForeignKey('SubCategory',null = True, on_delete=models.CASCADE)
+    level                = models.ForeignKey('Level', null=True, on_delete=models.CASCADE)
+    course_status        = models.ForeignKey('CourseStatus', on_delete=models.CASCADE)
+    discount_rate        = models.IntegerField(default=0, null=True)
     
     class Meta:
         db_table        = 'courses'
 
 class Media(models.Model):
-    url                 = models.URLField(max_length=200)
+    url                 = models.URLField(max_length=3000)
     type                = models.CharField(max_length=20)
     course              = models.ForeignKey('Course',on_delete=models.CASCADE)
 
@@ -31,7 +32,13 @@ class Level(models.Model):
     level               = models.CharField(max_length=45)
     
     class Meta:
-        db_table        = 'levels'                
+        db_table        = 'levels'  
+
+class CourseStatus(models.Model):
+    status = models.CharField(max_length=30)
+    
+    class Meta:
+        db_table        = 'coursestatus'
 
 class Comment(TimeStampModel):
     content             = models.CharField(max_length=400)
