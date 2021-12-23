@@ -4,22 +4,33 @@ from django.http          import JsonResponse
 from django.views         import View
 from django.db.utils      import IntegrityError
 
-from products.models      import Comment, Course
+from products.models      import Comment, Course, CourseStat
 from core.utils           import Authorize
-from users.models         import UserCourse
+from users.models         import UserCourse, UserCourseStat
+from django.db            import transaction
 
 class OrderView(View):
     @Authorize
     def post(self,request,course_id):
         try:
-            user, is_user = UserCourse.objects.get_or_create(user_id=request.user.id, course_id=course_id)
+            course_stat_id = CourseStat.objects.filter(course_id=course_id)
+            with transaction.atomic():
+                for course_stat_ids in course_stat_id:
+                    UserCourseStat.objects.create(
+                        user_id     = request.user.id,
+                        course_stat = course_stat_ids
+                    )
+                UserCourse.objects.create(
+                    course_id = course_id,
+                    user_id   = request.user.id
+                )
+                return JsonResponse({"message": "SUCCESS"}, status=200)           
         
-            if not is_user:
-                return JsonResponse({"message" : "USER ALREADY EXISTS"}, status=401)
-            return JsonResponse({"message": "SUCCESS"}, status=200)       
-
-        except IntegrityError : 
-            return JsonResponse({"message" : "INVALID_VALUE"}, status=400)
+        except IntegrityError:
+            return JsonResponse({"message" : "USER ALREADY EXISTS"}, status=401)
+            
+        except CourseStat.DoesNotExist :
+            return JsonResponse({"message" : "INVAILD_COURSE_STAT"}, status=401)
 
 class CommentView(View):
     @Authorize
