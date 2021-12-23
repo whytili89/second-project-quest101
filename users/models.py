@@ -43,8 +43,8 @@ class UserCourse(TimeStampModel):
         ]
 
 class SocialAccount(models.Model):
-    channel            = models.CharField(max_length=20)
-    url                = models.URLField(max_length=300,null=True)
+    channel            = models.CharField(max_length=20,null=True)
+    url                = models.URLField(max_length=3000,null=True)
     user               = models.ForeignKey('User',on_delete=models.CASCADE)
 
     class Meta:

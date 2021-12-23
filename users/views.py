@@ -1,11 +1,13 @@
 import jwt, requests
 
-from django.views import View
-from django.http  import JsonResponse
-from datetime     import datetime, timedelta
+from django.views      import View
+from django.http       import JsonResponse
+from datetime          import datetime, timedelta
+from django.db.models  import Sum, F
 
 from quest101.settings import SECRET_KEY, ALGORITHM
 from users.models      import User
+from core.utils        import Authorize
 
 class KakaoAPI:
     def __init__(self, access_token):
@@ -55,3 +57,23 @@ class KakaoSignInView(View):
         
         except jwt.ExpiredSignatureError:
             return JsonResponse({'message':'TOKEN_EXPIRED'}, status = 400)
+
+class UserStatView(View):
+    @Authorize
+    def get(self,request):
+        try:
+            stats = User.objects.filter(id=request.user.id).annotate(
+            score     = F('usercoursestat__course_stat__score'),
+            stat_name = F('usercoursestat__course_stat__stat__name')
+            ).values('stat_name').annotate(stat = Sum('score'))
+            
+            result = {
+                "id"    : request.user.id,
+                "name"  : request.user.name,
+                "stats" : list(stats)
+            }
+            return JsonResponse({'result':result},status=200)
+        
+        except KeyError:
+            return JsonResponse({'message':'KEY_ERROR'},status=401)
+        
