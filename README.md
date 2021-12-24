@@ -91,7 +91,7 @@ Common : Git, Github, Slack, Trello, Notion
 
 
 
-* 클래스 편집 및 삭제
+*클래스 편집 및 삭제
 
 
 
