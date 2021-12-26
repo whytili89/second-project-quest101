@@ -93,7 +93,24 @@ Common : Git, Github, Slack, Trello, Notion
 
 *클래스 편집 및 삭제
 
+## 영상
 
+### 로그인
+
+![로그인 과정](public/images/readme/login_01.gif)
+![로그인 과정](public/images/readme/login_02.gif)
+
+### 좋아요
+
+![좋아요 과정](public/images/readme/like.gif)
+
+### 디테일
+
+![디테일 과정](public/images/readme/detail.gif)
+
+### 폼
+
+![디테일 과정](public/images/readme/creator_form.gif)
 
 
 
