@@ -97,20 +97,20 @@ Common : Git, Github, Slack, Trello, Notion
 
 ### 로그인
 
-![로그인 과정](public/images/readme/login_01.gif)
-![로그인 과정](public/images/readme/login_02.gif)
+![로그인 과정](https://haileysbucket.s3.ap-northeast-2.amazonaws.com/readme/login_01.gif)
+![로그인 과정](https://haileysbucket.s3.ap-northeast-2.amazonaws.com/readme/login_02.gif)
 
 ### 좋아요
 
-![좋아요 과정](public/images/readme/like.gif)
+![좋아요 과정](https://haileysbucket.s3.ap-northeast-2.amazonaws.com/readme/like.gif)
 
 ### 디테일
 
-![디테일 과정](public/images/readme/detail.gif)
+![디테일 과정](https://haileysbucket.s3.ap-northeast-2.amazonaws.com/readme/detail.gif)
 
 ### 폼
 
-![디테일 과정](public/images/readme/creator_form.gif)
+![디테일 과정](https://haileysbucket.s3.ap-northeast-2.amazonaws.com/readme/creator_form.gif)
 
 
 
