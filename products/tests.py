@@ -115,7 +115,7 @@ class OrderViewTest(TestCase):
 
     def test_orderview_success(self):
         client = Client()
-        response = client.post('/products/2/order', **headers)
+        response = client.post('/products/order/2', **headers)
 
         self.assertEqual(response.json(),
             {"message" : "SUCCESS"}
@@ -123,7 +123,7 @@ class OrderViewTest(TestCase):
 
     def test_orderview_user_already_exists(self):
         client = Client()
-        response = client.post('/products/1/order', **headers)
+        response = client.post('/products/order/1', **headers)
 
         self.assertEqual(response.json(),
             {"message" : "USER ALREADY EXISTS"}
@@ -131,7 +131,7 @@ class OrderViewTest(TestCase):
 
     def test_orderview_integrity_error(self):
         client = Client()
-        response = client.post('/products/5/order', **headers)
+        response = client.post('/products/order/5', **headers)
 
         self.assertEqual(response.json(),
             {"message" : "INVALID_VALUE"}
@@ -229,7 +229,7 @@ class CommentTest(TestCase):
             'content' : 'a',
         }]
         
-        response = client.post('/products/2/comments',json.dumps(comment),**header, content_type='application/json')
+        response = client.post('/products/comments/2',json.dumps(comment),**header, content_type='application/json')
         self.assertEqual(response.json(), {'message':result})
         self.assertEqual(response.status_code, 200)
 
@@ -239,13 +239,13 @@ class CommentTest(TestCase):
         
         comment = {}
         
-        response = client.post('/products/1/comments',json.dumps(comment),**header, content_type='application/json')
+        response = client.post('/products/comments/1',json.dumps(comment),**header, content_type='application/json')
         self.assertEqual(response.json(), {'message':'KEY_ERROR'})
         self.assertEqual(response.status_code, 401)
 
     def test_comment_get_success(self):
         client = Client()
-        response = client.get('/products/1/comments')
+        response = client.get('/products/comments/1')
         
         course_comments = [
             {
@@ -270,7 +270,7 @@ class CommentTest(TestCase):
             'comment_id' : 1
         }
 
-        response = client.delete('/products/1/comments',json.dumps(body),**header)
+        response = client.delete('/products/comments/1',json.dumps(body),**header)
         self.assertEqual(response.json(),{'message':'SUCCESS_DELETE'})
         self.assertEqual(response.status_code, 200)
 
@@ -282,107 +282,130 @@ class CommentTest(TestCase):
             'comment_id' : 3
         }
 
-        response = client.delete('/products/1/comments',json.dumps(body),**header)
+        response = client.delete('/products/comments/1',json.dumps(body),**header)
         self.assertEqual(response.json(),{'message':'INVAILD_COMMENT'})
         self.assertEqual(response.status_code, 401)
 
-class LikeViewTest(TestCase):
+class ProductTest(TestCase):
+    
     def setUp(self):
-
+        
         User.objects.bulk_create([
-                User(
-                    id   = 1,
-                    name = "bear",
-                    kakao_id = 484248),
-                User(
-                    id= 2,
-                    name = "tiger",
-                    kakao_id = 879845)
-               ])
+            User(
+                id   = 1,
+                name = "bear",
+                kakao_id = 484248,
+                profile_image = "myimage123.com"),
+            User(
+                id= 2,
+                name = "tiger",
+                kakao_id = 879845,
+                profile_image = "myprofile123.com")    
+        ])
         
         Category.objects.bulk_create([
-                Category(
-                    id =1,
-                    name = "category1"),
-                Category(
-                    id = 2,
-                    name = "category2")
-        ])    
+            Category(
+                id =1,
+                name = "category1"),
+            Category(
+                id = 2,
+                name = "category2")          
+        ])
 
         SubCategory.objects.bulk_create([
-                SubCategory(
-                    id=1,
-                    name = "sports",
-                    category_id = 2),
-                SubCategory(
-                    id=2,
-                    name = "cook",
-                    category_id = 1)    
+            SubCategory(
+                id=1,
+                name = "sports",
+                category_id = 2),
+            SubCategory(
+                id=2,
+                name = "cook",
+                category_id = 1) 
         ])
 
         Level.objects.bulk_create([
-                Level(
-                    id =1,
-                    level = "초급"),
-                Level(
-                    id =2,
-                    level = "중급")
-        ])    
-        
-        Course.objects.bulk_create([
-                Course(
-                    id = 1,
-                    thumbnail_image_url='ewrrwaa.com',
-                    name = "Enjoy korean food",
-                    price = 30000,
-                    start_date = "2021-12-16",
-                    end_date = "2021-12-16",
-                    payment_period = 5,
-                    level_id = 1,
-                    user_id = 2,
-                    sub_category_id = 1),
-                Course(
-                    id = 2,
-                    thumbnail_image_url="sjflafj.com",
-                    name = "Enjoy Sports",
-                    price = 50000,
-                    start_date = "2021-12-16",
-                    end_date = "2021-12-16",
-                    payment_period = 3,
-                    level_id=2,
-                    user_id=1,
-                    sub_category_id = 2)    
+            Level(
+                id =1,
+                level = "초급"),
+            Level(
+                id =2,
+                level = "중급")
         ])
-        
+
+        Course.objects.bulk_create([
+            Course(
+                id = 1,
+                thumbnail_image_url='ewrrwaa.com',
+                name = "Enjoy korean food",
+                price = 30000,
+                start_date = "2021-12-16",
+                end_date = "2021-12-16",
+                payment_period = 5,
+                level_id = 1,
+                user_id = 2,
+                sub_category_id = 1,
+                discount_rate = 30,
+                description = "abcd"),
+            Course(
+                id = 2,
+                thumbnail_image_url="sjflafj.com",
+                name = "Enjoy Sports",
+                price = 50000,
+                start_date = "2021-12-16",
+                end_date = "2021-12-16",
+                payment_period = 3,
+                level_id=2,
+                user_id=1,
+                sub_category_id = 2,
+                discount_rate = 20,
+                description = "efgh")    
+        ])
+
+        Media.objects.bulk_create([
+            Media(
+                id = 1,
+                url = "abc.com",
+                course_id = 2),
+            Media(
+                id = 2,
+                url = "def.com",
+                course_id = 1)    
+        ])
+
+        Like.objects.bulk_create([
+            Like(
+                id = 1,
+                course_id = 1,
+                user_id = 2),
+            Like(
+                id = 2,
+                course_id = 2,
+                user_id = 1)    
+        ])
+
         Stat.objects.bulk_create([
-                Stat(
-                    id = 1,
-                    name = "wisdom"),
-                Stat(
-                    id = 2,
-                    name = "strength"
-                    )     
+            Stat(
+                id = 1,
+                name = "wisdom"),
+            Stat(
+                id = 2,
+                name = "strength")
         ])
 
         CourseStat.objects.bulk_create([
             CourseStat(
-                    id = 1,
-                    stat_id = 1,
-                    course_id = 2,
-                    score = 50),
+                id = 1,
+                stat_id = 1,
+                course_id = 2,
+                score = 50),
             CourseStat(
-                    id = 2,
-                    stat_id = 2,
-                    course_id = 1,
-                    score = 70)        
+                id = 2,
+                stat_id = 2,
+                course_id = 1,
+                score = 70
+            )
         ])        
         
-        Like.objects.create(
-            id = 1,
-            user_id = 2,
-            course_id = 2
-        )
-
         global headers
         token = jwt.encode({'user': 2}, SECRET_KEY, algorithm=ALGORITHM)
         headers = {"HTTP_Authorization" : token}
@@ -391,38 +414,45 @@ class LikeViewTest(TestCase):
         User.objects.all().delete()
         SubCategory.objects.all().delete()
         Course.objects.all().delete()
+        Media.objects.all().delete()
         Like.objects.all().delete()
         Stat.objects.all().delete()
         CourseStat.objects.all().delete()
-
-    def test_post_likeview_success(self):
+    
+    def test_productview_get_suceess(self):
         client=Client()
-        course_id = {"course_id" : 1}
-        response = client.post('/products/like', json.dumps(course_id), content_type = 'application/json', **headers)
-
-        self.assertEqual(response.json(),
-            {"message" : "SUCCESS_LIKE"}         
-        )
-        self.assertEqual(response.status_code, 200)
-
-    def test_likeview_post_delete_like(self):
-        client = Client()
-        course_id = {"course_id" : 2}
-        response = client.post('/products/like', json.dumps(course_id), content_type= 'application/json', **headers)
-
-        self.assertEqual(response.json(),
-            {"message" : "DELETE_LIKE"})
+        response = client.get('/products/detail/1', **headers)
+        self.maxDiff = None
         
-        self.assertEqual(response.status_code, 200)
-
-    def test_likeviews_integrityerror(self):
+        self.assertEqual(response.json(),
+            {'results' : {
+                "course_id"      : 1,
+                "sub_category"   : "sports",
+                "course_name"    : "Enjoy korean food",
+                "thumbnail_url"  : "ewrrwaa.com",
+                "page_image"     : "def.com",
+                "course_level"   : "초급",
+                "price"          : "30000.00",
+                "payment_period" : 5,
+                "discount_rate"  : 30,
+                "discount_price" : "9000.00",
+                "course_like"    : 1,
+                "course_stat"    : [{"stat_name" : "strength", "score" : 70}],
+                "is_like_True"   : True,
+                "user_name"      : "tiger",
+                "profile_image"  : "myprofile123.com",
+                "description"    : "abcd"
+                }
+            }    
+        )
+      
+        self.assertEqual(response.status_code,200) 
+       
+    def test_productview_get_doesnotexist(self):
         client=Client()
-        course_id = {"course_id" : 3}
-        response = client.post('/products/like', json.dumps(course_id), content_type = 'application/json', **headers)
+        response = client.get('/products/detail/3')
 
         self.assertEqual(response.json(),
-            {"message": "INVALID_VALUE"})
-
-        self.assertEqual(response.status_code, 400)
-
-
+            {"message" : "INVALID_COURSE"})
+        
+        self.assertEqual(response.status_code, 401)

@@ -44,8 +44,8 @@ DATABASES = {
 # Application definition
 
 INSTALLED_APPS = [
-#    'django.contrib.admin',
-#    'django.contrib.auth',
+    'django.contrib.admin',
+    'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     'users',
     'core',
     'products',
+    'creators',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -61,8 +63,8 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-#    'django.middleware.csrf.CsrfViewMiddleware',
-#    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -160,3 +162,14 @@ CORS_ALLOW_HEADERS = (
 )
 
 APPEND_SLASH     = False
+
+AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+AWS_STORAGE_BUCKET_NAME = "haileysbucket"
+AWS_REGION = "ap-northeast-2"
+
+REST_FRAMEWORK = {
+'DEFAULT_PERMISSION_CLASSES': [
+   'rest_framework.permissions.AllowAny',
+]
+}
