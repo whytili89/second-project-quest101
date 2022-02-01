@@ -898,3 +898,142 @@ class ProductListTest(TestCase):
       )
 
         self.assertEqual(response.status_code, 200)
+
+class LikeViewTest(TestCase):
+    def setUp(self):
+
+        User.objects.bulk_create([
+                User(
+                    id   = 1,
+                    name = "bear",
+                    kakao_id = 484248),
+                User(
+                    id= 2,
+                    name = "tiger",
+                    kakao_id = 879845)
+               ])
+        
+        Category.objects.bulk_create([
+                Category(
+                    id =1,
+                    name = "category1"),
+                Category(
+                    id = 2,
+                    name = "category2")
+        ])    
+
+        SubCategory.objects.bulk_create([
+                SubCategory(
+                    id=1,
+                    name = "sports",
+                    category_id = 2),
+                SubCategory(
+                    id=2,
+                    name = "cook",
+                    category_id = 1)    
+        ])
+
+        Level.objects.bulk_create([
+                Level(
+                    id =1,
+                    level = "초급"),
+                Level(
+                    id =2,
+                    level = "중급")
+        ])    
+        
+        Course.objects.bulk_create([
+                Course(
+                    id = 1,
+                    thumbnail_image_url='ewrrwaa.com',
+                    name = "Enjoy korean food",
+                    price = 30000,
+                    start_date = "2021-12-16",
+                    end_date = "2021-12-16",
+                    payment_period = 5,
+                    level_id = 1,
+                    user_id = 2,
+                    sub_category_id = 1),
+                Course(
+                    id = 2,
+                    thumbnail_image_url="sjflafj.com",
+                    name = "Enjoy Sports",
+                    price = 50000,
+                    start_date = "2021-12-16",
+                    end_date = "2021-12-16",
+                    payment_period = 3,
+                    level_id=2,
+                    user_id=1,
+                    sub_category_id = 2)    
+        ])
+        
+        Stat.objects.bulk_create([
+                Stat(
+                    id = 1,
+                    name = "wisdom"),
+                Stat(
+                    id = 2,
+                    name = "strength"
+                    )     
+        ])
+
+        CourseStat.objects.bulk_create([
+            CourseStat(
+                    id = 1,
+                    stat_id = 1,
+                    course_id = 2,
+                    score = 50),
+            CourseStat(
+                    id = 2,
+                    stat_id = 2,
+                    course_id = 1,
+                    score = 70)        
+        ])        
+        
+        Like.objects.create(
+            id = 1,
+            user_id = 2,
+            course_id = 2
+        )
+
+        global headers
+        token = jwt.encode({'user': 2}, SECRET_KEY, algorithm=ALGORITHM)
+        headers = {"HTTP_Authorization" : token}
+
+    def tearDown(self):
+        User.objects.all().delete()
+        SubCategory.objects.all().delete()
+        Course.objects.all().delete()
+        Like.objects.all().delete()
+        Stat.objects.all().delete()
+        CourseStat.objects.all().delete()
+
+    def test_post_likeview_success(self):
+        client=Client()
+        course_id = {"course_id" : 1}
+        response = client.post('/products/like', json.dumps(course_id), content_type = 'application/json', **headers)
+
+        self.assertEqual(response.json(),
+            {"message" : "SUCCESS_LIKE"}         
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_likeview_post_delete_like(self):
+        client = Client()
+        course_id = {"course_id" : 2}
+        response = client.post('/products/like', json.dumps(course_id), content_type= 'application/json', **headers)
+
+        self.assertEqual(response.json(),
+            {"message" : "DELETE_LIKE"})
+        
+        self.assertEqual(response.status_code, 200)
+
+    def test_likeviews_integrityerror(self):
+        client=Client()
+        course_id = {"course_id" : 3}
+        response = client.post('/products/like', json.dumps(course_id), content_type = 'application/json', **headers)
+
+        self.assertEqual(response.json(),
+            {"message": "INVALID_VALUE"})
+
+        self.assertEqual(response.status_code, 400)

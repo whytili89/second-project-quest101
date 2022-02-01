@@ -5,7 +5,7 @@ from django.views         import View
 from django.db.utils      import IntegrityError
 from django.db.models     import Q
 
-from products.models      import Comment, Course, CourseStat
+from products.models      import Comment, Course, Like, CourseStat
 from core.utils           import Authorize, AuthorizeProduct
 from users.models         import UserCourse, UserCourseStat
 from django.db            import transaction
@@ -153,4 +153,24 @@ class ProductListView(View):
                         "is_like_True"   : product.like_set.filter(user_id=request.user).exists()
                         } for product in products]
                 
-            return JsonResponse({"results" : results}, status=200) 
+            return JsonResponse({"results" : results}, status=200)
+
+class LikeView(View):
+    @Authorize
+    def post(self,request):
+        try:
+            data = json.loads(request.body)
+            course_id = data["course_id"]
+            
+            like, created = Like.objects.get_or_create(course_id=course_id, user_id=request.user.id)
+            
+            if not created:
+                like.delete()
+                return JsonResponse({"message" : "DELETE_LIKE"}, status=200)
+            return JsonResponse({"message" : "SUCCESS_LIKE"}, status=200)
+
+        except KeyError:
+            return JsonResponse({"message" : "KEY_ERROR"}, status=400)
+        
+        except IntegrityError:
+            return JsonResponse({"message" : "INVALID_VALUE"}, status=400)
